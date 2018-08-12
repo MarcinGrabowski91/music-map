@@ -11,7 +11,6 @@ import android.widget.Toast
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.android.support.AndroidSupportInjection
 import eu.gitcode.musicmap.R
 import eu.gitcode.musicmap.common.extensions.hideKeyboard
@@ -25,8 +24,6 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
 
     @Inject
     lateinit var mapPresenter: MapPresenter
-
-    private val currentMarkers = ArrayList<MarkerOptions>()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -81,18 +78,16 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
     }
 
     override fun showMarkers(markerOptions: List<MarkerOptions>) {
-        currentMarkers.clear()
-        currentMarkers.addAll(markerOptions)
         mapView.getMapAsync { mapBoxMap ->
             mapBoxMap.clear()
-            if (!currentMarkers.isEmpty()) {
+            if (!markerOptions.isEmpty()) {
                 for (marker in markerOptions) {
                     mapBoxMap.addMarker(marker)
                 }
-                val coordinatesToMove = LatLng(currentMarkers[0].position)
+                val coordinatesToMove = markerOptions[0].position
                 val cameraPosition = CameraPosition.Builder()
                         .target(coordinatesToMove)
-                        .zoom(MOVE_MAP_ZOOM)
+                        .zoom(ZOOM_AFTER_MAP_MOVE)
                         .build()
                 mapBoxMap.moveCamera { cameraPosition }
                 Toast.makeText(context, R.string.search_completed, Toast.LENGTH_SHORT).show()
@@ -128,7 +123,7 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
     companion object {
         val TAG = MapFragment::class.java.simpleName!!
 
-        private const val MOVE_MAP_ZOOM = 3.0
+        private const val ZOOM_AFTER_MAP_MOVE = 3.0
 
         fun newInstance(): MapFragment {
             return MapFragment()
