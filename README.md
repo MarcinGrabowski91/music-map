@@ -3,9 +3,7 @@
 
 ### How to build
 
-To build the project, create a `secret.properties` file in the project's main folder.
-
-Paste this line in your secret.properties file:
+To build the project, create a `secret.properties` file in the project's main folder and paste this line:
 
 `MapBoxAccessToken=YourAccessToken`
 
