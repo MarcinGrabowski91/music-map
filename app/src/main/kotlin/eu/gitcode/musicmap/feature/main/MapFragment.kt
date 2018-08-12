@@ -11,11 +11,21 @@ import android.widget.Toast
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapboxMap
 import dagger.android.support.AndroidSupportInjection
 import eu.gitcode.musicmap.R
 import eu.gitcode.musicmap.common.extensions.hideKeyboard
 import eu.gitcode.musicmap.common.extensions.isNetworkActive
+import eu.gitcode.musicmap.data.map.Marker
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.map_fragment.*
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -24,6 +34,8 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
 
     @Inject
     lateinit var mapPresenter: MapPresenter
+
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -70,6 +82,9 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
+        if (!compositeDisposable.isDisposed) {
+            compositeDisposable.dispose()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -77,24 +92,44 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
         mapView.onSaveInstanceState(outState)
     }
 
-    override fun showMarkers(markerOptions: List<MarkerOptions>) {
+    override fun showMarkers(markers: List<Marker>) {
         mapView.getMapAsync { mapBoxMap ->
+            compositeDisposable.clear()
             mapBoxMap.clear()
-            if (!markerOptions.isEmpty()) {
-                for (marker in markerOptions) {
-                    mapBoxMap.addMarker(marker)
+            if (!markers.isEmpty()) {
+                for (marker in markers) {
+                    addMarker(mapBoxMap, marker)
                 }
-                val coordinatesToMove = markerOptions[0].position
-                val cameraPosition = CameraPosition.Builder()
-                        .target(coordinatesToMove)
-                        .zoom(ZOOM_AFTER_MAP_MOVE)
-                        .build()
-                mapBoxMap.moveCamera { cameraPosition }
+                moveCamera(mapBoxMap, markers[0].coordinates)
                 Toast.makeText(context, R.string.search_completed, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, R.string.search_no_results, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun addMarker(mapBoxMap: MapboxMap, marker: Marker) {
+        val secondsToRemove = marker.beginYear - MIN_OPEN_YEAR
+        val markerOptions = MarkerOptions()
+                .setPosition(marker.coordinates)
+                .setTitle(marker.name)
+                .setSnippet(resources.getString(R.string.open_year, marker.beginYear))
+
+        val addedMarker = mapBoxMap.addMarker(markerOptions)
+        compositeDisposable += Observable.just(addedMarker)
+                .delay(secondsToRemove.toLong(), TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = { mapBoxMap.removeMarker(it) },
+                        onError = { Timber.d("Error during removing marker: $it") })
+
+    }
+
+    private fun moveCamera(mapBoxMap: MapboxMap, coordinates: LatLng) {
+        val cameraPosition = CameraPosition.Builder()
+                .target(coordinates)
+                .zoom(ZOOM_AFTER_MAP_MOVE)
+                .build()
+        mapBoxMap.moveCamera { cameraPosition }
     }
 
     override fun showSearchError() {
@@ -124,6 +159,8 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
         val TAG = MapFragment::class.java.simpleName!!
 
         private const val ZOOM_AFTER_MAP_MOVE = 3.0
+
+        private const val MIN_OPEN_YEAR = 1990
 
         fun newInstance(): MapFragment {
             return MapFragment()

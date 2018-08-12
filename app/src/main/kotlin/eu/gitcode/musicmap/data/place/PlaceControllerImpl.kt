@@ -12,13 +12,16 @@ class PlaceControllerImpl constructor(private val placeApi: PlaceApi) : PlaceCon
                 .toFlowable()
                 .flatMapIterable { t -> t }
                 .filter { t ->
-                    (t.lifeSpan?.getBeginDate() != null && t.lifeSpan.getBeginDate()!! >= 1990)
+                    (t.lifeSpan?.getBeginDate() != null
+                            && t.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
                             || (t.area?.lifeSpan?.getBeginDate() != null
-                            && t.area.lifeSpan.getBeginDate()!! >= 1990)
+                            && t.area.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
                 }.toList()
     }
 
     companion object {
         private const val PLACES_LIMIT = 400
+
+        private const val MIN_OPEN_YEAR = 1990
     }
 }

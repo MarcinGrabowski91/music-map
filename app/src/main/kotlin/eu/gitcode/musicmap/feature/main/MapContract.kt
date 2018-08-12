@@ -2,12 +2,12 @@ package eu.gitcode.musicmap.feature.main
 
 import com.hannesdorfmann.mosby3.mvp.MvpPresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import eu.gitcode.musicmap.data.map.Marker
 
 interface MapContract {
 
     interface View : MvpView {
-        fun showMarkers(markerOptions: List<MarkerOptions>)
+        fun showMarkers(markers: List<Marker>)
 
         fun showSearchError()
 

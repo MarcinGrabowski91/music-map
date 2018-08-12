@@ -2,9 +2,9 @@ package eu.gitcode.musicmap.feature.main
 
 import android.location.Geocoder
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import eu.gitcode.musicmap.application.scope.FragmentScope
+import eu.gitcode.musicmap.data.map.Marker
 import eu.gitcode.musicmap.data.place.PlaceController
 import eu.gitcode.musicmap.data.place.model.Place
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -40,14 +40,24 @@ class MapPresenter @Inject constructor(private val placeController: PlaceControl
                 )
     }
 
-    private fun convertToMarkers(places: List<Place>): List<MarkerOptions> {
-        val markers = ArrayList<MarkerOptions>()
+    private fun convertToMarkers(places: List<Place>): List<Marker> {
+        val markers = ArrayList<Marker>()
         for (place in places) {
+            val beginYear = if (place.lifeSpan?.begin == null) {
+                place.area!!.lifeSpan!!.getBeginDate()!!
+            } else {
+                place.lifeSpan.getBeginDate()!!
+            }
             if (place.coordinates != null) {
-                val latLng = LatLng(place.coordinates.getLatitude(), place.coordinates.getLongitude())
-                markers.add(MarkerOptions().position(latLng).title(place.name))
+                val coordinates = LatLng(place.coordinates.getLatitude(),
+                        place.coordinates.getLongitude())
+                markers.add(Marker(coordinates, place.name, beginYear))
             } else if (place.address != null) {
-                geocoder.getFromLocationName(place.address, ADDRESS_SEARCH_MAX_RESULTS)
+                val addresses = geocoder.getFromLocationName(place.address, ADDRESS_SEARCH_MAX_RESULTS)
+                if (addresses != null && !addresses.isEmpty()) {
+                    val coordinates = LatLng(addresses[0].latitude, addresses[0].longitude)
+                    markers.add(Marker(coordinates, place.name, beginYear))
+                }
             }
         }
         return markers
