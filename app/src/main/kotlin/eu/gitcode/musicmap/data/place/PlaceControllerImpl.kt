@@ -4,6 +4,7 @@ import eu.gitcode.musicmap.data.place.model.Place
 import io.reactivex.Single
 
 class PlaceControllerImpl constructor(private val placeApi: PlaceApi) : PlaceController {
+
     override fun findPlaces(place: String): Single<List<Place>> {
         return placeApi
                 .findPlaces(place, PLACES_LIMIT)
