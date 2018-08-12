@@ -8,8 +8,7 @@ apply plugin: 'com.github.ben-manes.versions'
 ext {
 
     secrets = [
-            // define your app secrets, for example:
-            // hockeyAppId: keyProperty("HOCKEY_APP_ID")
+            mapBoxAccessToken: keyProperty("MAP_BOX_ACCESS_TOKEN")
     ]
 }
 
@@ -52,18 +51,19 @@ android {
 
     flavorDimensions "api"
 
+    defaultConfig {
+        buildConfigField 'String', 'MAP_BOX_ACCESS_TOKEN', "\"${secrets.mapBoxAccessToken}\""
+    }
+
     productFlavors {
         mock {
             versionNameSuffix "-MOCK"
             applicationIdSuffix ".mock"
             dimension "api"
 
-            // put your secrets in the BuildConfig.java class, for example:
-            // buildConfigField 'String', 'HOCKEY_APP_ID', "\"${secrets.hockeyAppId}\""
         }
         production {
             dimension "api"
-            // inherit
         }
     }
 
@@ -101,6 +101,11 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -149,21 +154,11 @@ dependencies {
     implementation libs.retrofitGsonConverter
     implementation libs.retrofitRxJava2Adapter
 
-    // PaperParcel
-    implementation libs.paperParcel
-    kapt proc.paperParcel
-
     // Timber
     implementation libs.timber
 
     // Stetho
     debugImplementation libs.stetho
-
-    // LeakCanary
-    debugImplementation libs.leakCanary
-
-    // BlockCanary
-    debugImplementation libs.blockCanary
 
     // Unit testing
     testImplementation test.junit
@@ -175,4 +170,7 @@ dependencies {
     testImplementation(test.threetenabp) {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }
+
+    // MapBox
+    implementation libs.mapBox
 }

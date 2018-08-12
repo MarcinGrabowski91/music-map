@@ -47,6 +47,7 @@ ext {
             blockCanary             : "com.github.markzhai:blockcanary-android:1.5.0",
             leakCanary              : "com.squareup.leakcanary:leakcanary-android:1.6.1",
             paperParcel             : "nz.bradcampbell:paperparcel:$paperParcelVersion",
+            mapBox                  : "com.mapbox.mapboxsdk:mapbox-android-sdk:6.3.0"
     ]
 
     proc = [

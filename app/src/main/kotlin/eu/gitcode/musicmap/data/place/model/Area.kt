@@ -8,5 +8,5 @@ data class Area(
         @SerializedName("type-id") val typeId: String,
         @SerializedName("name") val name: String,
         @SerializedName("sort-name") val sortName: String,
-        @SerializedName("life-span") val lifeSpan: LifeSpan
+        @SerializedName("life-span") val lifeSpan: LifeSpan?
 )

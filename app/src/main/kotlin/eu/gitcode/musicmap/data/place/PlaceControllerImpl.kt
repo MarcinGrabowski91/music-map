@@ -12,8 +12,8 @@ class PlaceControllerImpl constructor(private val placeApi: PlaceApi) : PlaceCon
                 .toFlowable()
                 .flatMapIterable { t -> t }
                 .filter { t ->
-                    (t.lifeSpan.getBeginDate() != null && t.lifeSpan.getBeginDate()!! >= 1990)
-                            || (t.area.lifeSpan.getBeginDate() != null
+                    (t.lifeSpan?.getBeginDate() != null && t.lifeSpan.getBeginDate()!! >= 1990)
+                            || (t.area?.lifeSpan?.getBeginDate() != null
                             && t.area.lifeSpan.getBeginDate()!! >= 1990)
                 }.toList()
     }
