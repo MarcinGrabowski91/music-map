@@ -4,6 +4,8 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
+import eu.gitcode.musicmap.application.module.ApiModule
+import eu.gitcode.musicmap.application.module.NetworkModule
 import eu.gitcode.musicmap.application.scope.AppScope
 
 @AppScope
@@ -11,7 +13,10 @@ import eu.gitcode.musicmap.application.scope.AppScope
         modules = [
             AndroidInjectionModule::class,
             AndroidSupportInjectionModule::class,
-            ApplicationModule::class
+            ApplicationModule::class,
+            ApiModule::class,
+            NetworkModule::class,
+            FragmentBindingsModule::class
         ]
 )
 internal interface ApplicationComponent : AndroidInjector<App> {

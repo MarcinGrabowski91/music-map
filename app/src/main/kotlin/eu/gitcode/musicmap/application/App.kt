@@ -1,5 +1,6 @@
 package eu.gitcode.musicmap.application
 
+import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import io.reactivex.plugins.RxJavaPlugins
@@ -17,6 +18,7 @@ class App : DaggerApplication() {
         super.onCreate()
         debugMetricsHelper.init(this)
         RxJavaPlugins.setErrorHandler(rxJavaErrorHandler)
+        AndroidThreeTen.init(this)
     }
 
     override fun applicationInjector(): AndroidInjector<App> =
