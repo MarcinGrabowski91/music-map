@@ -1,5 +1,8 @@
 ## **Application shows places used for performing or producing music.**
-#### Based on MusicBrainz API and MapBox SDK
+#### Goals
+- Based on MusicBrainz API and MapBox SDK
+- Displayed places should be open from 1990
+- Every pin has a lifespan, meaning after it expires, pin should be removed from the map. Lifespan calculation: open_year - 1990 = lifespan_in_seconds. Example: 2017 - 1990 = 27s
 
 ### How to build
 
