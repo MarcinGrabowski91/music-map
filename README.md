@@ -12,10 +12,11 @@ so huge responses could be cut
 
 ### How to build
 
-To build the project, create a `secret.properties` file in the project's main folder and paste this line:
+To build the project:
+- create a `secret.properties` file in the project's main folder and paste this line:
 
 `MapBoxAccessToken=YourAccessToken`
 
-| Property             | External property name | Environment variable |
-|----------------------|------------------------|----------------------|
-| MapBox Access Token  | MapBoxAccessToken      | MAP_BOX_ACCESS_TOKEN |
+- Open Android Studio preferences -> Build, Execution, Deployment -> Compiler -> Turn off `Configure on demand`. 
+
+[Gradle 4.6 users: If you're using either Android Plugin for Gradle 3.0.1 or 3.1.0 with Gradle 4.6, you should disable configuration on demand to avoid some unpredictable build errors. This issue should be fixed in a future version of the plugin.] Source: https://developer.android.com/studio/build/optimize-your-build
