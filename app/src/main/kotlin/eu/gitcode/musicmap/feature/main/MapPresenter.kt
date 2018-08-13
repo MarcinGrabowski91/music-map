@@ -11,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,7 +36,12 @@ class MapPresenter @Inject constructor(private val placeController: PlaceControl
                         },
                         onError = {
                             Timber.d("Error during loading places: $it")
-                            ifViewAttached { view -> view.showSearchError() }
+                            val httpException = it as HttpException
+                            if (httpException.code() == SERVICE_UNAVAILABLE_ERROR_CODE) {
+                                ifViewAttached { view -> view.showTooManyRequestsError() }
+                            } else {
+                                ifViewAttached { view -> view.showSearchError() }
+                            }
                         }
                 )
     }
@@ -71,5 +77,7 @@ class MapPresenter @Inject constructor(private val placeController: PlaceControl
 
     companion object {
         private const val ADDRESS_SEARCH_MAX_RESULTS = 1
+
+        private const val SERVICE_UNAVAILABLE_ERROR_CODE = 503
     }
 }

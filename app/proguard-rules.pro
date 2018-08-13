@@ -49,6 +49,10 @@
 
 # Gson
 -keep class sun.misc.Unsafe { *; }
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+# Gson specific classes
+-dontwarn sun.misc.**
 
 # retrofit
 -keepclasseswithmembers class * {
@@ -96,9 +100,56 @@
   public *;
 }
 
--dontwarn okhttp3.**
 -dontwarn okio.**
+-dontwarn okhttp3.**
+-keep class retrofit.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}
+
+#GMS
+-keep public class com.google.android.gms.* { public *; }
+-dontwarn com.google.android.gms.**
+
+-dontwarn retrofit.**
 -dontwarn javax.annotation.**
+
+# --- Retrofit ---
+# Retain generic type information for use by reflection by converters and adapters.
+-keepattributes Signature
+# Retain service method parameters.
+-keepclassmembernames interface * {
+    @retrofit2.http.* <methods>;
+}
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.*
 
 #dagger
 -dontwarn com.google.errorprone.annotations.*
+
+# Retrofit 2
+# Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontnote retrofit2.Platform
+# Platform used when running on RoboVM on iOS. Will not be used at runtime.
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+# Platform used when running on Java 8 VMs. Will not be used at runtime.
+-dontwarn retrofit2.Platform$Java8
+# Retain generic type information for use by reflection by converters and adapters.
+-keepattributes Signature
+# Retain declared checked exceptions for use by a Proxy instance.
+-keepattributes Exceptions
+
+# --- OkHttp ---
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn okio.BufferedSink
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
+
+# --- AutoValue ---
+# AutoValue annotations are retained but dependency is compileOnly.
+-dontwarn com.google.auto.value.**

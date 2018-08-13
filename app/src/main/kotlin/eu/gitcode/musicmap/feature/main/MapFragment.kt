@@ -108,6 +108,35 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
         }
     }
 
+    override fun showSearchError() {
+        Toast.makeText(context, R.string.search_error, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showTooManyRequestsError() {
+        Toast.makeText(context, R.string.too_many_requests, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
+        progressBar.visibility = View.GONE
+    }
+
+    override fun createPresenter(): MapContract.Presenter = mapPresenter
+
+    private fun findPlaces() {
+        activity?.hideKeyboard()
+        if (context != null && !context!!.isNetworkActive()) {
+            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show()
+        } else {
+            if (progressBar.visibility != View.VISIBLE) {
+                presenter.getPlaces(searchEdit.text.toString())
+            }
+        }
+    }
+
     private fun addMarker(mapBoxMap: MapboxMap, marker: Marker) {
         val secondsToRemove = marker.beginYear - MIN_OPEN_YEAR
         val markerOptions = MarkerOptions()
@@ -130,29 +159,6 @@ class MapFragment : MvpFragment<MapContract.View, MapContract.Presenter>(),
                 .zoom(ZOOM_AFTER_MAP_MOVE)
                 .build()
         mapBoxMap.moveCamera { cameraPosition }
-    }
-
-    override fun showSearchError() {
-        Toast.makeText(context, R.string.search_error, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showProgressBar() {
-        progressBar.visibility = View.VISIBLE
-    }
-
-    override fun hideProgressBar() {
-        progressBar.visibility = View.GONE
-    }
-
-    override fun createPresenter(): MapContract.Presenter = mapPresenter
-
-    private fun findPlaces() {
-        activity?.hideKeyboard()
-        if (context != null && !context!!.isNetworkActive()) {
-            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show()
-        } else {
-            presenter.getPlaces(searchEdit.text.toString())
-        }
     }
 
     companion object {
