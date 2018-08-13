@@ -9,7 +9,9 @@ interface PlaceApi {
 
     @GET("place")
     fun findPlaces(
-            @Query("query") query: String, @Query("limit") limit: Int,
+            @Query("query") query: String,
+            @Query("limit") limit: Int,
+            @Query("offset") offset: Int,
             @Query("fmt") format: String = "json"
     ): Single<PlaceResponse>
 }
