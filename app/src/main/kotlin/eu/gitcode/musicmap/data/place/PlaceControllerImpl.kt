@@ -7,7 +7,6 @@ class PlaceControllerImpl constructor(private val placeApi: PlaceApi) : PlaceCon
 
     override fun findPlaces(placeName: String): Single<List<Place>> {
         return getFilteredPlaces(placeName, 0, listOf())
-
     }
 
     private fun getFilteredPlaces(placeName: String, offset: Int, placesList: List<Place>)
