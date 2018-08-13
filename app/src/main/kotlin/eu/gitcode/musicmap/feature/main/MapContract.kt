@@ -11,6 +11,8 @@ interface MapContract {
 
         fun showSearchError()
 
+        fun showTooManyRequestsError()
+
         fun showProgressBar()
 
         fun hideProgressBar()
