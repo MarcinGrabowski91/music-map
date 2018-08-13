@@ -7,5 +7,5 @@ import javax.inject.Singleton
 @Singleton
 interface PlaceController {
 
-    fun findPlaces(place: String): Single<List<Place>>
+    fun findPlaces(placeName: String): Single<List<Place>>
 }

@@ -5,22 +5,40 @@ import io.reactivex.Single
 
 class PlaceControllerImpl constructor(private val placeApi: PlaceApi) : PlaceController {
 
-    override fun findPlaces(place: String): Single<List<Place>> {
-        return placeApi
-                .findPlaces(place, PLACES_LIMIT)
-                .map { t -> t.places }
+    override fun findPlaces(placeName: String): Single<List<Place>> {
+        return getFilteredPlaces(placeName, 0, listOf())
+
+    }
+
+    private fun getFilteredPlaces(placeName: String, offset: Int, placesList: List<Place>)
+            : Single<List<Place>> {
+        return placeApi.findPlaces(placeName, PLACES_LIMIT_PER_REQUEST, offset)
+                .flatMap { placeResponse ->
+                    if (placeResponse.count < offset) {
+                        filterPlaces(placesList)
+                    } else {
+                        getFilteredPlaces(placeName,
+                                offset + PLACES_LIMIT_PER_REQUEST,
+                                placesList.plus(placeResponse.places))
+                    }
+                }
+    }
+
+    private fun filterPlaces(placesList: List<Place>): Single<List<Place>> {
+        return Single.just(placesList)
+                .map { placeResponse -> placeResponse }
                 .toFlowable()
-                .flatMapIterable { t -> t }
-                .filter { t ->
-                    (t.lifeSpan?.getBeginDate() != null
-                            && t.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
-                            || (t.area?.lifeSpan?.getBeginDate() != null
-                            && t.area.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
+                .flatMapIterable { places -> places }
+                .filter { place ->
+                    (place.lifeSpan?.getBeginDate() != null
+                            && place.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
+                            || (place.area?.lifeSpan?.getBeginDate() != null
+                            && place.area.lifeSpan.getBeginDate()!! >= MIN_OPEN_YEAR)
                 }.toList()
     }
 
     companion object {
-        private const val PLACES_LIMIT = 400
+        private const val PLACES_LIMIT_PER_REQUEST = 20
 
         private const val MIN_OPEN_YEAR = 1990
     }
