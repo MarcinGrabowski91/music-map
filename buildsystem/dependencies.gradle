@@ -39,7 +39,7 @@ ext {
             retrofit                : "com.squareup.retrofit2:retrofit:$retrofitVersion",
             retrofitGsonConverter   : "com.squareup.retrofit2:converter-gson:$retrofitVersion",
             retrofitRxJava2Adapter  : "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion",
-            threetenabp             : "com.jakewharton.threetenabp:threetenabp:1.0.5",
+            threetenabp             : "com.jakewharton.threetenabp:threetenabp:1.1.0",
             timber                  : "com.jakewharton.timber:timber:4.7.1",
             stetho                  : "com.facebook.stetho:stetho:$stethoVersion",
             stethoOkhttp            : "com.facebook.stetho:stetho-okhttp3:$stethoVersion",
@@ -47,6 +47,7 @@ ext {
             blockCanary             : "com.github.markzhai:blockcanary-android:1.5.0",
             leakCanary              : "com.squareup.leakcanary:leakcanary-android:1.6.1",
             paperParcel             : "nz.bradcampbell:paperparcel:$paperParcelVersion",
+            mapBox                  : "com.mapbox.mapboxsdk:mapbox-android-sdk:6.3.0"
     ]
 
     proc = [
@@ -62,6 +63,6 @@ ext {
             mockitoKotlin        : "com.nhaarman:mockito-kotlin-kt1.1:1.6.0",
             junit                : "junit:junit:4.12",
             mockWebServer        : "com.squareup.okhttp3:mockwebserver:$okHttpVersion",
-            threetenabp          : 'org.threeten:threetenbp:1.3.2'
+            threetenabp          : 'org.threeten:threetenbp:1.3.6'
     ]
 }
